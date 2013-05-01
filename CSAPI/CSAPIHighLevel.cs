@@ -1,0 +1,328 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+
+namespace CSAPI
+{
+    /// <summary>
+    /// Provides high API functionality using DTOs
+    /// </summary>
+    public class CSAPIHighLevel
+    {
+    	CSAPILowLevel _api;
+
+        public CSAPIHighLevel(string apiKey, string apiId, string hostname = null)
+        {
+            _api = new CSAPILowLevel (apiKey, apiId, hostname);
+        }
+
+        #region EnvInfo
+
+        public string GetEnvDetailsUrl(EnvStatus env)
+	    {
+            var envList = ListEnvironments();
+            return (from e in envList where e.envId == env.envId select e.view_url).FirstOrDefault();
+	    }
+	
+	    public List<EnvStatus> GetEnvironmentStatusList(string filterSpecificUser="")
+	    {
+            var envList = ListEnvironments();
+            return (from env in envList 
+                    where filterSpecificUser == "" || filterSpecificUser.ToLower() == env.owner.ToLower() 
+                    select GetEnvironmentState(env))
+                        .ToList();
+	    }
+	
+	    public EnvStatus GetEnvironmentState(EnvsListElement env)
+	    {
+            var envStateParams = new Dictionary<string, string> { { "EnvId", env.envId } };
+			var json = _api.CallCSAPI("env","GetEnvironmentState", envStateParams);
+		    return JsonConvert.DeserializeObject<EnvStatus>(json);  
+	    }
+     
+        public List<SnapshotStatus> GetSnapshots(EnvsListElement env)
+        {
+            var envStateParams = new Dictionary<string, string> { { "EnvId", env.envId } };
+            var json = _api.CallCSAPI("env", "GetSnapshots", envStateParams);
+            return JsonConvert.DeserializeObject<List<SnapshotStatus>>(json);
+        }
+
+	    public List<EnvsListElement> ListEnvironments()
+	    {
+		    var json = _api.CallCSAPI("env","ListEnvironments", new Dictionary<string,string>());
+            return JsonConvert.DeserializeObject<List<EnvsListElement>>(json);  
+	    }
+
+        public List<DetailedEnvsListElement> ListEnvironmentsWithState()
+        {
+            var json = _api.CallCSAPI("env", "ListEnvironmentsWithState", new Dictionary<string, string>());
+            return JsonConvert.DeserializeObject<List<DetailedEnvsListElement>>(json);
+        }
+
+        public bool IsRevertable(EnvStatus env)
+        {
+            return env.snapshot != "N/A" && env.snapshot != null;
+        }
+
+        #endregion
+
+        #region GeneralEnvActions
+
+        public void ResumeEnvironment (EnvStatus env)
+	    {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            _api.CallCSAPI("env", "ResumeEnvironment", Params);
+	    }
+
+        public void RevertEnvironment (EnvStatus env)
+	    {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            _api.CallCSAPI("env", "RevertEnvironment", Params);
+	    }
+
+        public void DeleteEnvironment(EnvStatus env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            _api.CallCSAPI("env", "DeleteEnvironment", Params);
+        }
+
+        public void ExtendEnvironment(EnvStatus env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            _api.CallCSAPI("env", "ExtendEnvironment", Params);
+        }
+
+        public void SuspendEnvironment(EnvStatus env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            _api.CallCSAPI("env", "SuspendEnvironment", Params);
+        }
+
+        public void RevertEnvironmentToSnapshot(EnvStatus env, SnapshotStatus snapshot)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId }, { "SnapshotId", snapshot.SnapshotId } };
+            _api.CallCSAPI("env", "RevertEnvironmentToSnapshot", Params);
+        }
+
+        public async Task ResumeEnvironmentAsync(EnvStatus env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            await _api.CallCSAPIAsync("env", "ResumeEnvironment", Params);
+        }
+
+        public async Task RevertEnvironmentAsync(EnvStatus env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            await _api.CallCSAPIAsync("env", "RevertEnvironment", Params);
+        }
+
+        public async Task DeleteEnvironmentAsync(EnvStatus env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            await _api.CallCSAPIAsync("env", "DeleteEnvironment", Params);
+        }
+
+        public async Task ExtendEnvironmentAsync(EnvStatus env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            await _api.CallCSAPIAsync("env", "ExtendEnvironment", Params);
+        }
+
+        public async Task SuspendEnvironmentAsync(EnvStatus env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            await _api.CallCSAPIAsync("env", "SuspendEnvironment", Params);
+        }
+
+        public async Task RevertEnvironmentToSnapshotAsync(EnvStatus env, SnapshotStatus snapshot)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId }, { "SnapshotId", snapshot.SnapshotId } };
+            await _api.CallCSAPIAsync("env", "RevertEnvironmentToSnapshot", Params);
+        }
+
+        #endregion
+
+        #region CreateEnvActions
+
+        public List<TemplatesListElement> ListTemplates()
+        {
+            var json = _api.CallCSAPI("env", "ListTemplates", new Dictionary<string, string>());
+            return JsonConvert.DeserializeObject<TemplatesList>(json).templatesList;
+        }
+
+        public bool AddVmFromTemplate(EnvsListElement env, TemplatesListElement template, string vmName, string vmDescription)
+        {
+            return InternalAddVMFromTemplate(env.envId, template.id, vmName, vmDescription);
+        }
+
+        private bool InternalAddVMFromTemplate (string envId, string templateId, string vmName, string vmDescription)
+        {
+            try
+            {
+                var Params = new Dictionary<string, string> { { "EnvId", envId }, 
+                                                    { "TemplateVmId", templateId} ,
+                                                    {"VmName",vmName},
+                                                    {"VmDescription",vmDescription}
+                };
+                _api.CallCSAPI("env", "AddVmFromTemplate", Params);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Caught exception while adding a VM from template:\n" + e.Message);
+                return false;
+            }
+        }
+        public bool AddVmFromTemplate(EnvStatus env, TemplatesListElement template, string vmName, string vmDescription)
+        {
+            return InternalAddVMFromTemplate(env.envId, template.id, vmName, vmDescription);
+        }
+
+        public List<EnvPolicyListElement> CreateEntAppEnvOptions(string projectFilter = "", string blueprintFilter = "", string environmentPolicyDurationFilter = "")
+        {
+            var Params = new Dictionary<string, string> { { "ProjectFilter", projectFilter }, { "BlueprintFilter", blueprintFilter }, { "EnvironmentPolicyDurationFilter", environmentPolicyDurationFilter } };
+            var json = _api.CallCSAPI("env", "CreateEntAppEnvOptions", Params);
+
+            return JsonConvert.DeserializeObject<List<EnvPolicyListElement>>(json);
+        }
+
+        public void CreateEntAppEnv(EnvPolicyListElement environmentPolicy, SnapshotStatus snapshot, string environmentNewName = null, string projectFilter = "", string blueprintFilter = "", string environmentPolicyDurationFilter = "")
+        {
+            var Params = new Dictionary<string, string> { { "EnvironmentPolicyId", environmentPolicy.EnvironmentPolicyId }, { "SnapshotId", snapshot.SnapshotId }, { "ProjectFilter", projectFilter }, { "BlueprintFilter", blueprintFilter }, { "EnvironmentPolicyDurationFilter", environmentPolicyDurationFilter }, { "EnvironmentNewName", environmentNewName } };
+            _api.CallCSAPI("env", "CreateEntAppEnv", Params);
+        }
+        
+        public void CreateEmptyEntAppEnv(string envName, string projectName, string description = "none")
+        {
+            var Params = new Dictionary<string, string> { { "EnvName", envName }, { "ProjectName", projectName }, { "Description", description } };
+            _api.CallCSAPI("env", "CreateEmptyEntAppEnv", Params);
+        }
+
+        #endregion
+
+        #region Snapshots
+
+        public List<BlueprintInfo> GetBlueprintsForPublish(EnvsListElement env)
+        {
+            var envStateParams = new Dictionary<string, string> { { "EnvId", env.envId } };
+            var json = _api.CallCSAPI("env", "GetBlueprintsForPublish", envStateParams);
+            return JsonConvert.DeserializeObject<List<BlueprintInfo>>(json);
+        }
+
+        public void MarkSnapshotDefault(EnvsListElement env, SnapshotStatus snapshot)
+        {
+            var envStateParams = new Dictionary<string, string> { { "EnvId", env.envId }, { "SnapshotId", snapshot.SnapshotId } };
+            _api.CallCSAPI("env", "MarkSnapshotDefault", envStateParams);
+        }
+
+        public void EntAppTakeSnapshot(EnvsListElement env, string snapshotName, string description = "", bool setAsDefault = true)
+        {
+            var envStateParams = new Dictionary<string, string> { { "EnvId", env.envId }, { "SnapshotName", snapshotName }, { "Description", description }, { "SetAsDefault", setAsDefault ? "true" : "false" } };
+            _api.CallCSAPI("env", "EntAppTakeSnapshot", envStateParams);
+        }
+
+        public void EntAppTakeSnapshotToNewBlueprint(EnvsListElement env, string snapshotName, string newBlueprintName, string description = "")
+        {
+            var envStateParams = new Dictionary<string, string> { { "EnvId", env.envId }, { "SnapshotName", snapshotName } };
+            _api.CallCSAPI("env", "EntAppTakeSnapshotToNewBlueprint", envStateParams);
+        }
+
+        public void EntAppTakeSnapshotToExistingBlueprint(EnvsListElement env, string snapshotName, BlueprintInfo otherBlueprint, string description = "", bool setAsDefault = true)
+        {
+            var envStateParams = new Dictionary<string, string> { { "EnvId", env.envId }, { "SnapshotName", snapshotName }, { "OtherBlueprintId", otherBlueprint.ApiId }, { "Description", description }, { "SetAsDefault", setAsDefault ? "true" : "false" }, };
+            _api.CallCSAPI("env", "EntAppTakeSnapshotToExistingBlueprint", envStateParams);
+        }
+
+        #endregion
+
+        #region VmActions
+
+        public bool DeleteVm(EnvStatus env, VmStatus ms)
+        {
+            try
+            {
+                var Params = new Dictionary<string, string> { {"EnvId", env.envId}, {"VmId",ms.vmId}
+                };
+                _api.CallCSAPI("env", "DeleteVm", Params);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Caught exception while deleting a VM from environment:\n" + e.Message);
+                return false;
+            }
+        }
+
+        public bool RevertVm(EnvStatus env, VmStatus ms)
+        {
+            try
+            {
+                var Params = new Dictionary<string, string> { {"EnvId", env.envId}, {"VmId",ms.vmId}
+                };
+                _api.CallCSAPI("env", "RevertVm", Params);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Caught exception while reverting a VM:\n" + e.Message);
+                return false;
+            }
+        }
+
+        public bool RebootVm(EnvStatus env, VmStatus ms)
+        {
+            try
+            {
+                var Params = new Dictionary<string, string> { {"EnvId", env.envId}, {"VmId",ms.vmId}
+                };
+                _api.CallCSAPI("env", "RebootVm", Params);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Caught exception while rebooting a VM:\n" + e.Message);
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region CloudFolders
+
+        public CloudFoldersStatus GetCloudFoldersInfo()
+        {
+            var Params = new Dictionary<string, string> {};
+
+            var json = _api.CallCSAPI("env", "GetCloudFoldersInfo", Params);
+            return JsonConvert.DeserializeObject<CloudFoldersStatus>(json);  
+        }
+
+        public void Mount(EnvsListElement env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            _api.CallCSAPI("env", "Mount", Params);
+        }
+
+        public void Unmount(EnvsListElement env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            _api.CallCSAPI("env", "Unmount", Params);
+        }
+
+        #endregion
+
+        #region Login
+
+        public string GetLoginUrl(string url)
+        {
+            var Params = new Dictionary<string, string> { { "Url", url } };
+
+            var json = _api.CallCSAPI("env", "GetLoginUrl", Params);
+            return JsonConvert.DeserializeObject<LoginElement>(json).login_url;  
+        }
+
+        #endregion
+    }
+}
