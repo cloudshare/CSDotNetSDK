@@ -1,4 +1,4 @@
-CloudShare C# SDK API
+CloudShare .NET SDK API
 =====================
 
 ## Description
