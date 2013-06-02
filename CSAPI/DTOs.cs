@@ -201,6 +201,7 @@ namespace CSAPI
         public string total_quota_gb { get; set; }
         public string uri { get; set; }
         public string user { get; set; }
+        public string private_folder_name { get; set; }
     }
 
     public class BlueprintInfo
