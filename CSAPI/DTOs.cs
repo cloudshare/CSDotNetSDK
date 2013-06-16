@@ -42,30 +42,15 @@ namespace CSAPI
         public string environmentPolicy { get; set; }
     }
 
-    public class DetailedEnvsListElement
+    public class DetailedEnvsListElement : EnvsListElement
     {
-        public string envId { get; set; }
-        public string envToken { get; set; }
-
-        public string name { get; set; }
-        public string description { get; set; }
-
-        public int status_code { get; set; }
-        public string status_text { get; set; }
-
-        public string organization { get; set; }
-        public string owner { get; set; }
-        public string licenseValid { get; set; }
-        public bool invitationAllowed { get; set; }
-        public string expirationTime { get; set; }
-        public string view_url { get; set; }
-
-        public string snapshot { get; set; }
-        public string blueprint { get; set; }
-        public string project { get; set; }
-        public string environmentPolicy { get; set; }
-
         public List<VmStatus> vms { get; set; }
+    }
+
+    public class EnvStatus : DetailedEnvsListElement
+    {
+        public AvailableActions available_actions { get; set; }
+        public EnvResources resources { get; set; }
     }
 
     public class EnvsList
@@ -90,33 +75,6 @@ namespace CSAPI
         public string webAccessUrl { get; set; }
         public string url { get; set; }
         public string image_url { get; set; }
-    }
-
-    public class EnvStatus
-    {
-        public string envId { get; set; }
-        public string envToken { get; set; }
-        public string name { get; set; }
-        public string description { get; set; }
-
-        public string view_url { get; set; }
-        public int status_code { get; set; }
-        public string status_text { get; set; }
-
-        public string organization { get; set; }
-        public string snapshot { get; set; }
-        public string owner { get; set; }
-        public string licenseValid { get; set; }
-        public string expirationTime { get; set; }
-        public List<VmStatus> vms { get; set; }
-
-        public string blueprint { get; set; }
-        public string project { get; set; }
-        public string environmentPolicy { get; set; }
-        public bool invitationAllowed { get; set; }
-
-        public AvailableActions available_actions { get; set; }
-        public EnvResources resources { get; set; }
     }
 
     public class AvailableActions

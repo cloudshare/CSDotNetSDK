@@ -20,7 +20,7 @@ namespace CSAPI
 
         #region EnvInfo
 
-        public string GetEnvDetailsUrl(EnvStatus env)
+        public string GetEnvDetailsUrl(EnvsListElement env)
 	    {
             var envList = ListEnvironments();
             return (from e in envList where e.envId == env.envId select e.view_url).FirstOrDefault();
@@ -61,7 +61,7 @@ namespace CSAPI
             return JsonConvert.DeserializeObject<List<DetailedEnvsListElement>>(json);
         }
 
-        public bool IsRevertable(EnvStatus env)
+        public bool IsRevertable(EnvsListElement env)
         {
             return env.snapshot != "N/A" && env.snapshot != null;
         }
@@ -70,73 +70,73 @@ namespace CSAPI
 
         #region GeneralEnvActions
 
-        public void ResumeEnvironment (EnvStatus env)
+        public void ResumeEnvironment(EnvsListElement env)
 	    {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
             _api.CallCSAPI("env", "ResumeEnvironment", Params);
 	    }
 
-        public void RevertEnvironment (EnvStatus env)
+        public void RevertEnvironment(EnvsListElement env)
 	    {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
             _api.CallCSAPI("env", "RevertEnvironment", Params);
 	    }
 
-        public void DeleteEnvironment(EnvStatus env)
+        public void DeleteEnvironment(EnvsListElement env)
         {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
             _api.CallCSAPI("env", "DeleteEnvironment", Params);
         }
 
-        public void ExtendEnvironment(EnvStatus env)
+        public void ExtendEnvironment(EnvsListElement env)
         {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
             _api.CallCSAPI("env", "ExtendEnvironment", Params);
         }
 
-        public void SuspendEnvironment(EnvStatus env)
+        public void SuspendEnvironment(EnvsListElement env)
         {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
             _api.CallCSAPI("env", "SuspendEnvironment", Params);
         }
 
-        public void RevertEnvironmentToSnapshot(EnvStatus env, SnapshotStatus snapshot)
+        public void RevertEnvironmentToSnapshot(EnvsListElement env, SnapshotStatus snapshot)
         {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId }, { "SnapshotId", snapshot.SnapshotId } };
             _api.CallCSAPI("env", "RevertEnvironmentToSnapshot", Params);
         }
 
-        public async Task ResumeEnvironmentAsync(EnvStatus env)
+        public async Task ResumeEnvironmentAsync(EnvsListElement env)
         {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
             await _api.CallCSAPIAsync("env", "ResumeEnvironment", Params);
         }
 
-        public async Task RevertEnvironmentAsync(EnvStatus env)
+        public async Task RevertEnvironmentAsync(EnvsListElement env)
         {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
             await _api.CallCSAPIAsync("env", "RevertEnvironment", Params);
         }
 
-        public async Task DeleteEnvironmentAsync(EnvStatus env)
+        public async Task DeleteEnvironmentAsync(EnvsListElement env)
         {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
             await _api.CallCSAPIAsync("env", "DeleteEnvironment", Params);
         }
 
-        public async Task ExtendEnvironmentAsync(EnvStatus env)
+        public async Task ExtendEnvironmentAsync(EnvsListElement env)
         {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
             await _api.CallCSAPIAsync("env", "ExtendEnvironment", Params);
         }
 
-        public async Task SuspendEnvironmentAsync(EnvStatus env)
+        public async Task SuspendEnvironmentAsync(EnvsListElement env)
         {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
             await _api.CallCSAPIAsync("env", "SuspendEnvironment", Params);
         }
 
-        public async Task RevertEnvironmentToSnapshotAsync(EnvStatus env, SnapshotStatus snapshot)
+        public async Task RevertEnvironmentToSnapshotAsync(EnvsListElement env, SnapshotStatus snapshot)
         {
             var Params = new Dictionary<string, string> { { "EnvId", env.envId }, { "SnapshotId", snapshot.SnapshotId } };
             await _api.CallCSAPIAsync("env", "RevertEnvironmentToSnapshot", Params);
@@ -174,10 +174,6 @@ namespace CSAPI
                 Console.WriteLine("Caught exception while adding a VM from template:\n" + e.Message);
                 return false;
             }
-        }
-        public bool AddVmFromTemplate(EnvStatus env, TemplatesListElement template, string vmName, string vmDescription)
-        {
-            return InternalAddVMFromTemplate(env.envId, template.id, vmName, vmDescription);
         }
 
         public List<EnvPolicyListElement> CreateEntAppEnvOptions(string projectFilter = "", string blueprintFilter = "", string environmentPolicyDurationFilter = "")
@@ -239,7 +235,7 @@ namespace CSAPI
 
         #region VmActions
 
-        public bool DeleteVm(EnvStatus env, VmStatus ms)
+        public bool DeleteVm(EnvsListElement env, VmStatus ms)
         {
             try
             {
@@ -255,7 +251,7 @@ namespace CSAPI
             }
         }
 
-        public bool RevertVm(EnvStatus env, VmStatus ms)
+        public bool RevertVm(EnvsListElement env, VmStatus ms)
         {
             try
             {
@@ -271,7 +267,7 @@ namespace CSAPI
             }
         }
 
-        public bool RebootVm(EnvStatus env, VmStatus ms)
+        public bool RebootVm(EnvsListElement env, VmStatus ms)
         {
             try
             {
