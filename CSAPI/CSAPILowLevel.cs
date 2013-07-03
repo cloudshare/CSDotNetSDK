@@ -55,6 +55,18 @@ namespace CSAPI
         }
 
         /// <summary>
+        /// Synchronous method, calls 'commandCategory/commandName' without parameters.
+        /// </summary>
+        /// <param name="commandCategory">The command category</param>
+        /// <param name="commandName">The command's name</param>
+        /// <exception cref="ApiException">Thrown when API response is not 200</exception>
+        /// <returns>The API response body</returns>
+        public String CallCSAPI(String commandCategory, String commandName)
+        {
+            return CallCSAPI(commandCategory, commandName, new Dictionary<string, string>());
+        }
+
+        /// <summary>
         /// Asynchronous method, calls 'commandCategory/commandName' with parameters Params.
         /// </summary>
         /// <param name="commandCategory">The command category</param>

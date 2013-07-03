@@ -283,6 +283,19 @@ namespace CSAPI
             }
         }
 
+        public ExecutePathResult ExecutePath(EnvsListElement env, VmStatus ms, string path)
+        {
+            var @params = new Dictionary<string, string>
+                { 
+                    { "EnvId", env.envId },
+                    { "VmId", ms.vmId },
+                    { "Path", path }
+                };
+
+            var json = _api.CallCSAPI("env", "ExecutePath", @params);
+            return JsonConvert.DeserializeObject<ExecutePathResult>(json);  
+        }
+
         #endregion
 
         #region CloudFolders
@@ -307,6 +320,13 @@ namespace CSAPI
             _api.CallCSAPI("env", "Unmount", Params);
         }
 
+        public ExtendedCloudFoldersStatus MountAndFetchInfo(EnvsListElement env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            var json = _api.CallCSAPI("env", "MountAndFetchInfo", Params);
+            return JsonConvert.DeserializeObject<ExtendedCloudFoldersStatus>(json);
+        }
+
         #endregion
 
         #region Login
@@ -320,5 +340,16 @@ namespace CSAPI
         }
 
         #endregion
+
+        #region Admin
+
+        public List<string> ListAllowedCommands()
+        {
+            var json = _api.CallCSAPI("Admin", "ListAllowedCommands");
+            return JsonConvert.DeserializeObject<List<string>>(json);
+        }
+
+        #endregion
+
     }
 }

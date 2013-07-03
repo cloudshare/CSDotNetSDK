@@ -162,6 +162,13 @@ namespace CSAPI
         public string private_folder_name { get; set; }
     }
 
+    public class ExtendedCloudFoldersStatus : CloudFoldersStatus
+    {
+        public string linuxFolder { get; set; }
+        public string mounted_folder_token { get; set; }
+        public string windowsFolder { get; set; }
+    }
+
     public class BlueprintInfo
     {
         public string ApiId { get; set; }
@@ -171,5 +178,10 @@ namespace CSAPI
     public class LoginElement
     {
         public string login_url { get; set; }
+    }
+
+    public class ExecutePathResult
+    {
+        public string executed_path { get; set; }
     }
 }
