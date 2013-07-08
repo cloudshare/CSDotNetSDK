@@ -146,9 +146,15 @@ namespace CSAPI
                 if (queryParams != "")
                     queryParams += '&';
 
-                queryParams += paramName + '=' + HttpUtility.UrlEncode(value);
+                queryParams += paramName + '=' + ParamValueEncode(value);
             }
             return String.Format("{0}/{1}/{2}?{3}&HMAC={4}", _BaseURL, commandCategory, commandName, queryParams, CalcSha(stringToSha));
+        }
+
+        private static string ParamValueEncode(string value)
+        {
+            var t = HttpUtility.UrlEncode(value);
+            return t != null ? t.Replace("+", "%20") : "";
         }
 
         public static String ByteArrayToString(byte[] byteArray)
