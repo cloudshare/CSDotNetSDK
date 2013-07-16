@@ -55,10 +55,10 @@ namespace CSAPI
             return JsonConvert.DeserializeObject<List<EnvsListElement>>(json);  
 	    }
 
-        public List<DetailedEnvsListElement> ListEnvironmentsWithState()
+        public List<EnvStatus> ListEnvironmentsWithState()
         {
             var json = _api.CallCSAPI("env", "ListEnvironmentsWithState", new Dictionary<string, string>());
-            return JsonConvert.DeserializeObject<List<DetailedEnvsListElement>>(json);
+            return JsonConvert.DeserializeObject<List<EnvStatus>>(json);
         }
 
         public bool IsRevertable(EnvsListElement env)
