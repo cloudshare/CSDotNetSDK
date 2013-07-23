@@ -169,6 +169,11 @@ namespace CSAPI
         public string windowsFolder { get; set; }
     }
 
+    public class DetailedCloudFoldersStatus : ExtendedCloudFoldersStatus
+    {
+        public bool? isActionComplete { get; set; }
+    }
+
     public class BlueprintInfo
     {
         public string ApiId { get; set; }
@@ -184,4 +189,38 @@ namespace CSAPI
     {
         public string executed_path { get; set; }
     }
+
+    public class RemoteAccessFileResult
+    {
+        public string rdp { get; set; }
+        public string clearTextPassword { get; set; }
+    }
+
+    public class SnapshotDetails
+    {
+        public string snapshotId { get; set; }
+        public string name { get; set; }
+        public string creationTime { get; set; }
+        public string author { get; set; }
+        public string comment { get; set; }
+        public bool isDefault { get; set; }
+        public bool isLatest { get; set; }
+        public IList<MachineDetails> machineList { get; set; }
+        public string url { get; set; }
+
+        public class MachineDetails
+        {
+            public string name { get; set; }
+            public string os { get; set; }
+            public string internalAdresses { get; set; }
+            public long? memory_mb { get; set; }
+            public long? diskSize_mb { get; set; }
+            public int? cpu_count { get; set; }
+            public string description { get; set; }
+            public string user { get; set; }
+            public string password { get; set; }
+        }
+    }
+
+    
 }

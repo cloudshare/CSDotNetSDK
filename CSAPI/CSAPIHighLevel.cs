@@ -66,6 +66,17 @@ namespace CSAPI
             return env.snapshot != "N/A" && env.snapshot != null;
         }
 
+        public SnapshotDetails GetSnapshotDetails(string snapshotId)
+        {
+            var @params = new Dictionary<string, string>
+                { 
+                    { "snapshotId", snapshotId }
+                };
+
+            var json = _api.CallCSAPI("env", "GetSnapshotDetails", @params);
+            return JsonConvert.DeserializeObject<SnapshotDetails>(json);
+        }
+
         #endregion
 
         #region GeneralEnvActions
@@ -283,6 +294,25 @@ namespace CSAPI
             }
         }
 
+        public RemoteAccessFileResult GetRemoteAccessFile(EnvsListElement env, VmStatus ms, int desktopWidth, int desktopHeight, bool? isConsole)
+        {
+            var @params = new Dictionary<string, string>
+                { 
+                    { "EnvId", env.envId },
+                    { "VmId", ms.vmId },
+                    { "desktopWidth", desktopWidth.ToString() },
+                    { "desktopHeight", desktopHeight.ToString() }
+                };
+
+            if (isConsole != null)
+            {
+                @params.Add("isConsole", isConsole.Value ? "true" : "false");
+            }
+
+            var json = _api.CallCSAPI("env", "GetRemoteAccessFile", @params);
+            return JsonConvert.DeserializeObject<RemoteAccessFileResult>(json); 
+        }
+
         public ExecutePathResult ExecutePath(EnvsListElement env, VmStatus ms, string path)
         {
             var @params = new Dictionary<string, string>
@@ -294,6 +324,17 @@ namespace CSAPI
 
             var json = _api.CallCSAPI("env", "ExecutePath", @params);
             return JsonConvert.DeserializeObject<ExecutePathResult>(json);  
+        }
+
+        public DetailedCloudFoldersStatus MountAndFetchInfoExt(EnvsListElement env)
+        {
+            var @params = new Dictionary<string, string>
+                { 
+                    { "EnvId", env.envId },
+                };
+
+            var json = _api.CallCSAPI("env", "MountAndFetchInfoExt", @params);
+            return JsonConvert.DeserializeObject<DetailedCloudFoldersStatus>(json);  
         }
 
         #endregion
