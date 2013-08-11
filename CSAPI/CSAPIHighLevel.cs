@@ -337,6 +337,32 @@ namespace CSAPI
             return JsonConvert.DeserializeObject<DetailedCloudFoldersStatus>(json);  
         }
 
+        public ExecutePathExtResult ExecutePathExt(EnvsListElement env, VmStatus ms, string path)
+        {
+            var @params = new Dictionary<string, string>
+                { 
+                    { "EnvId", env.envId },
+                    { "VmId", ms.vmId },
+                    { "Path", path }
+                };
+
+            var json = _api.CallCSAPI("env", "ExecutePathExt", @params);
+            return JsonConvert.DeserializeObject<ExecutePathExtResult>(json);
+        }
+
+        public CheckExecutionStatusResult CheckExecutionStatus(EnvsListElement env, VmStatus ms, string executionId)
+        {
+            var @params = new Dictionary<string, string>
+                { 
+                    { "EnvId", env.envId },
+                    { "VmId", ms.vmId },
+                    { "ExecutionId", executionId }
+                };
+
+            var json = _api.CallCSAPI("env", "CheckExecutionStatus", @params);
+            return JsonConvert.DeserializeObject<CheckExecutionStatusResult>(json);
+        }
+
         #endregion
 
         #region CloudFolders

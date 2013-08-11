@@ -222,5 +222,17 @@ namespace CSAPI
         }
     }
 
-    
+    public class ExecutePathExtResult
+    {
+        public string executionId { get; set; }
+    }
+
+    public class CheckExecutionStatusResult
+    {
+        public int? error_code { get; set; }
+        public bool? success { get; set; }
+        public string standard_output { get; set; }
+        public string standard_error { get; set; }
+        public string executed_path { get; set; }
+    }
 }
