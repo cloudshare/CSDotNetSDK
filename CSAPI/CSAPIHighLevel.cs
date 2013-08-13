@@ -232,7 +232,7 @@ namespace CSAPI
 
         public void EntAppTakeSnapshotToNewBlueprint(EnvsListElement env, string snapshotName, string newBlueprintName, string description = "")
         {
-            var envStateParams = new Dictionary<string, string> { { "EnvId", env.envId }, { "SnapshotName", snapshotName } };
+            var envStateParams = new Dictionary<string, string> { { "EnvId", env.envId }, { "SnapshotName", snapshotName }, { "NewBlueprintName", newBlueprintName }, { "Description", description } };
             _api.CallCSAPI("env", "EntAppTakeSnapshotToNewBlueprint", envStateParams);
         }
 
