@@ -153,6 +153,13 @@ namespace CSAPI
             await _api.CallCSAPIAsync("env", "RevertEnvironmentToSnapshot", Params);
         }
 
+        public PostponeInactivityActionResult PostponeInactivityAction(EnvsListElement env)
+        {
+            var Params = new Dictionary<string, string> { { "EnvId", env.envId } };
+            var json =_api.CallCSAPI("env", "PostponeInactivityAction", Params);
+            return JsonConvert.DeserializeObject<PostponeInactivityActionResult>(json);
+        }
+
         #endregion
 
         #region CreateEnvActions
@@ -394,6 +401,14 @@ namespace CSAPI
             return JsonConvert.DeserializeObject<ExtendedCloudFoldersStatus>(json);
         }
 
+        public RegeneratePasswordResult RegenerateCloudfoldersPassword()
+        {
+            var Params = new Dictionary<string, string> { };
+
+            var json = _api.CallCSAPI("env", "RegenerateCloudfoldersPassword", Params);
+            return JsonConvert.DeserializeObject<RegeneratePasswordResult>(json);
+        }
+
         #endregion
 
         #region Login
@@ -404,6 +419,14 @@ namespace CSAPI
 
             var json = _api.CallCSAPI("env", "GetLoginUrl", Params);
             return JsonConvert.DeserializeObject<LoginElement>(json).login_url;  
+        }
+
+        public WhoAmIResult WhoAmI(string userId)
+        {
+            var Params = new Dictionary<string, string> { { "UserId", userId } };
+
+            var json = _api.CallCSAPI("env", "WhoAmI", Params);
+            return JsonConvert.DeserializeObject<WhoAmIResult>(json);
         }
 
         #endregion

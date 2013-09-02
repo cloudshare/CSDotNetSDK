@@ -174,6 +174,12 @@ namespace CSAPI
         public bool? isActionComplete { get; set; }
     }
 
+    public class RegeneratePasswordResult
+    {
+        public string new_password { get; set; }
+        public string new_ftp_uri { get; set; }
+    }
+
     public class BlueprintInfo
     {
         public string ApiId { get; set; }
@@ -185,9 +191,25 @@ namespace CSAPI
         public string login_url { get; set; }
     }
 
+    public class WhoAmIResult
+    {
+        public string first_name { get; private set; }
+        public string last_name { get; private set; }
+        public string email { get; private set; }
+        public string company { get; private set; }
+        public string phone { get; private set; }
+        public string job_title { get; private set; }
+    }
+
     public class ExecutePathResult
     {
         public string executed_path { get; set; }
+    }
+
+    public class PostponeInactivityActionResult
+    {
+        public bool is_success { get; private set; }
+        public string message { get; private set; }
     }
 
     public class RemoteAccessFileResult
