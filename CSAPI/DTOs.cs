@@ -257,4 +257,9 @@ namespace CSAPI
         public string standard_error { get; set; }
         public string executed_path { get; set; }
     }
+	
+	public class EditMachineHardwareDto
+    {
+        public bool conflictsFound { get; set; }
+    }
 }

@@ -269,6 +269,22 @@ namespace CSAPI
             }
         }
 
+		// This method will be supported starting October 20
+        public bool EditMachineHardware(EnvsListElement env, VmStatus vm, int? numCpus, int? memorySizeMBs,
+                                        int? diskSizeGBs)
+        {
+            var Params = new Dictionary<string, string> {{"EnvId", env.envId}, {"VmId", vm.vmId}};
+            if (numCpus.HasValue)
+                Params["NumCpus"] = numCpus.Value.ToString();
+            if (memorySizeMBs.HasValue)
+                Params["MemorySizeMBs"] = memorySizeMBs.Value.ToString();
+            if (diskSizeGBs.HasValue)
+                Params["DiskSizeGBs"] = diskSizeGBs.Value.ToString();
+            var json = _api.CallCSAPI("Env", "EditMachineHardware", Params);
+            var dto = JsonConvert.DeserializeObject<EditMachineHardwareDto>(json);
+            return !dto.conflictsFound;
+        }
+
         public bool RevertVm(EnvsListElement env, VmStatus ms)
         {
             try
