@@ -269,7 +269,6 @@ namespace CSAPI
             }
         }
 
-		// This method will be supported starting October 20
         public bool EditMachineHardware(EnvsListElement env, VmStatus vm, int? numCpus, int? memorySizeMBs,
                                         int? diskSizeGBs)
         {

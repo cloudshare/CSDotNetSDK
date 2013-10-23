@@ -261,5 +261,6 @@ namespace CSAPI
 	public class EditMachineHardwareDto
     {
         public bool conflictsFound { get; set; }
+        public List<string> conflicts { get; set; }
     }
 }
