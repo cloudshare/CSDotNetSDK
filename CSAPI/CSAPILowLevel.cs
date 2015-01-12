@@ -94,8 +94,10 @@ namespace CSAPI
         {
             var result = CallCSAPI("ApiTest", "Ping", new Dictionary<String, String>());
 
+#if DEBUG
             if (result != null)
                 Console.WriteLine(result);
+#endif
 
             return result != null;
         }
